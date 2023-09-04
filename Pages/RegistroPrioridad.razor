@@ -1,0 +1,45 @@
+﻿@page "/registro-prioridad"
+
+<h3>Registro de Prioridad</h3>
+
+<EditForm Model="prioridad" OnValidSubmit="GuardarPrioridad">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Descripcion">Descripción:</label>
+        <InputText id="Descripcion" @bind-Value="prioridad.Descripcion" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="DiasCompromiso">Días de Compromiso:</label>
+        <InputNumber id="DiasCompromiso" @bind-Value="prioridad.DiasCompromiso" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar Prioridad</button>
+</EditForm>
+
+@code {
+    private Prioridad prioridad = new Prioridad();
+
+    [Inject]
+    private ApplicationDbContext _context { get; set; }
+
+    private async Task GuardarPrioridad()
+    {
+        var existingPrioridad = await _context.Prioridades
+            .FirstOrDefaultAsync(p => p.Descripcion == prioridad.Descripcion);
+
+        if (existingPrioridad != null)
+        {
+            var errorMessage = "Ya existe una prioridad con esta descripción.";
+            //
+        }
+        else
+        {
+            _context.Prioridades.Add(prioridad);
+            await _context.SaveChangesAsync();
+
+        }
+    }
+}
